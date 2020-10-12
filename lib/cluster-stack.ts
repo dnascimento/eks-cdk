@@ -1,31 +1,47 @@
-import * as apigw from "@aws-cdk/aws-apigateway";
-import * as lambda from "@aws-cdk/aws-lambda";
-import * as s3 from "@aws-cdk/aws-s3";
 import { CfnOutput, Construct, Stack, StackProps } from "@aws-cdk/core";
-import * as path from "path";
+import * as ec2 from "@aws-cdk/aws-ec2";
+import * as eks from "@aws-cdk/aws-eks";
+import * as s3 from "@aws-cdk/aws-s3";
+import * as yaml from "js-yaml";
+import * as fs from "fs";
+
+const argocdManinfestUrl =
+  "https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml";
 
 export class ClusterStack extends Stack {
   public readonly clusterEndpoint: CfnOutput;
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    new s3.Bucket(this, "batata")
+    new s3.Bucket(this, "batata");
+    const cluster = new eks.Cluster(this, "Eks", {
+      clusterName: "eks",
+      version: eks.KubernetesVersion.V1_17,
+      defaultCapacity: 0,
+      // endpointAccess: eks.EndpointAccess.PRIVATE // No access outside of your VPC.
+    });
 
-    // The Lambda function that contains the functionality
-    // const handler = new lambda.Function(this, "Lambda", {
-    //   runtime: lambda.Runtime.NODEJS_12_X,
-    //   handler: "handler.handler",
-    //   code: lambda.Code.fromAsset(path.resolve(__dirname, "lambda")),
+    // // cluster.addNodegroupCapacity('custom-node-group', {
+    // //   instanceType: new ec2.InstanceType('t2.micro'),
+    // //   minSize: 1,
+    // //   diskSize: 100,
+    // // });
+    // cluster.addFargateProfile('MyProfile', {
+    //   selectors: [ { namespace: 'default' } ]
     // });
 
-    // // An API Gateway to make the Lambda web-accessible
-    // const gw = new apigw.LambdaRestApi(this, "Gateway", {
-    //   description: "Endpoint for a simple Lambda-powered web service",
-    //   handler,
+    const argocdManifest = yaml.safeLoadAll(
+      fs.readFileSync("./k8s-manifests/argocd.yaml", "utf8")
+    );
+    // cluster.addManifest("argocd", ...argocdManifest);
+    // cluster.addHelmChart('NginxIngress', {
+    //   chart: 'nginx-ingress',
+    //   repository: 'https://helm.nginx.com/stable',
+    //   namespace: 'kube-system'
     // });
 
     this.clusterEndpoint = new CfnOutput(this, "Url", {
-      value: "https://amazon.com",
+      value: cluster.clusterEndpoint,
     });
   }
 }

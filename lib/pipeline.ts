@@ -1,6 +1,10 @@
 import { ClusterStack } from "../lib/cluster-stack";
 import * as cdk from "@aws-cdk/core";
-import { CdkPipeline, SimpleSynthAction, ShellScriptAction } from "@aws-cdk/pipelines";
+import {
+  CdkPipeline,
+  SimpleSynthAction,
+  ShellScriptAction,
+} from "@aws-cdk/pipelines";
 import * as codepipeline from "@aws-cdk/aws-codepipeline";
 import * as codepipeline_actions from "@aws-cdk/aws-codepipeline-actions";
 
@@ -31,7 +35,7 @@ export class ClusterPipeline extends cdk.Stack {
 
     const sourceArtifact = new codepipeline.Artifact();
     const cloudAssemblyArtifact = new codepipeline.Artifact();
-    const oauthSecretArn = "dnascimento-github-token"
+    const oauthSecretArn = "dnascimento-github-token";
     const oauth = cdk.SecretValue.secretsManager(oauthSecretArn);
 
     const pipeline = new CdkPipeline(this, "Pipeline", {
@@ -60,34 +64,35 @@ export class ClusterPipeline extends cdk.Stack {
 
     // Do this as many times as necessary with any account and region
     // Account and region may different from the pipeline's.
-     const dev = new ClusterApp(scope, "Dev", {
-        env: {
-          account: "223476298486",
-          region: "ap-southeast-2",
-        },
-      });
-    const devStage = pipeline.addApplicationStage(dev)
-
-    devStage.addActions(new ShellScriptAction({
-      actionName: 'TestService',
-      useOutputs: {
-        // Get the stack Output from the Stage and make it available in
-        // the shell script as $ENDPOINT_URL.
-        ENDPOINT_URL: pipeline.stackOutput(dev.clusterEndpoint),
+    const dev = new ClusterApp(scope, "Dev", {
+      env: {
+        account: "223476298486",
+        region: "ap-southeast-2",
       },
-      commands: [
-        // Use 'curl' to GET the given URL and fail if it returns an error
-        'curl -Ssf $ENDPOINT_URL',
-      ],
-    }));
-    pipeline.addApplicationStage(
-      new ClusterApp(scope, "Non-Prod", {
-        env: {
-          account: "511321940675",
-          region: "ap-southeast-2",
+    });
+    const devStage = pipeline.addApplicationStage(dev);
+
+    devStage.addActions(
+      new ShellScriptAction({
+        actionName: "TestService",
+        useOutputs: {
+          // Get the stack Output from the Stage and make it available in
+          // the shell script as $ENDPOINT_URL.
+          ENDPOINT_URL: pipeline.stackOutput(dev.clusterEndpoint),
         },
+        commands: [
+          // Use 'curl' to GET the given URL and fail if it returns an error
+          "curl -Ssf $ENDPOINT_URL",
+        ],
       })
     );
-
+    // pipeline.addApplicationStage(
+    //   new ClusterApp(scope, "Non-Prod", {
+    //     env: {
+    //       account: "511321940675",
+    //       region: "ap-southeast-2",
+    //     },
+    //   })
+    // );
   }
 }
