@@ -66,5 +66,14 @@ export class ClusterPipeline extends cdk.Stack {
         },
       })
     );
+    pipeline.addApplicationStage(
+      new ClusterApp(scope, "Non-Prod", {
+        env: {
+          account: "511321940675",
+          region: "ap-southeast-2",
+        },
+      })
+    );
+
   }
 }
