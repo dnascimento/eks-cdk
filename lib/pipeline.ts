@@ -59,7 +59,7 @@ export class ClusterPipeline extends cdk.Stack {
     // Do this as many times as necessary with any account and region
     // Account and region may different from the pipeline's.
     pipeline.addApplicationStage(
-      new ClusterApp(scope, "Prod", {
+      new ClusterApp(scope, "Mgmt", {
         env: {
           account: "223476298486",
           region: "ap-southeast-2",
