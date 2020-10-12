@@ -23,7 +23,6 @@ export class ClusterStack extends Stack {
       version: eks.KubernetesVersion.V1_17,
       defaultCapacity: 0,
       vpc,
-      // endpointAccess: eks.EndpointAccess.PRIVATE // No access outside of your VPC.
       vpcSubnets: [{ subnetType: ec2.SubnetType.PUBLIC }],
     });
 
