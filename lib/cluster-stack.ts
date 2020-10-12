@@ -5,7 +5,7 @@ import { CfnOutput, Construct, Stack, StackProps } from "@aws-cdk/core";
 import * as path from "path";
 
 export class ClusterStack extends Stack {
-  public readonly urlOutput: CfnOutput;
+  public readonly clusterEndpoint: CfnOutput;
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
@@ -24,8 +24,8 @@ export class ClusterStack extends Stack {
     //   handler,
     // });
 
-    // this.urlOutput = new CfnOutput(this, "Url", {
-    //   value: gw.url,
-    // });
+    this.clusterEndpoint = new CfnOutput(this, "Url", {
+      value: "https://amazon.com",
+    });
   }
 }

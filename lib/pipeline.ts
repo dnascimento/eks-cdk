@@ -1,6 +1,6 @@
 import { ClusterStack } from "../lib/cluster-stack";
 import * as cdk from "@aws-cdk/core";
-import { CdkPipeline, SimpleSynthAction } from "@aws-cdk/pipelines";
+import { CdkPipeline, SimpleSynthAction, ShellScriptAction } from "@aws-cdk/pipelines";
 import * as codepipeline from "@aws-cdk/aws-codepipeline";
 import * as codepipeline_actions from "@aws-cdk/aws-codepipeline-actions";
 
@@ -13,10 +13,12 @@ import * as codepipeline_actions from "@aws-cdk/aws-codepipeline-actions";
  * we make sure they are deployed together, or not at all.
  */
 class ClusterApp extends cdk.Stage {
+  public readonly clusterEndpoint: cdk.CfnOutput;
   constructor(scope: cdk.Construct, id: string, props?: cdk.StageProps) {
     super(scope, id, props);
 
     const cluster = new ClusterStack(this, "Cluster");
+    this.clusterEndpoint = cluster.clusterEndpoint;
   }
 }
 
@@ -58,14 +60,26 @@ export class ClusterPipeline extends cdk.Stack {
 
     // Do this as many times as necessary with any account and region
     // Account and region may different from the pipeline's.
-    pipeline.addApplicationStage(
-      new ClusterApp(scope, "Mgmt", {
+     const dev = new ClusterApp(scope, "Dev", {
         env: {
           account: "223476298486",
           region: "ap-southeast-2",
         },
-      })
-    );
+      });
+    const devStage = pipeline.addApplicationStage(dev)
+
+    devStage.addActions(new ShellScriptAction({
+      actionName: 'TestService',
+      useOutputs: {
+        // Get the stack Output from the Stage and make it available in
+        // the shell script as $ENDPOINT_URL.
+        ENDPOINT_URL: pipeline.stackOutput(dev.clusterEndpoint),
+      },
+      commands: [
+        // Use 'curl' to GET the given URL and fail if it returns an error
+        'curl -Ssf $ENDPOINT_URL',
+      ],
+    }));
     pipeline.addApplicationStage(
       new ClusterApp(scope, "Non-Prod", {
         env: {
