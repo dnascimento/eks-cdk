@@ -13,15 +13,18 @@ export class ClusterStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    // const vpc = ec2.Vpc.fromLookup(this, "VPC", {
-    //   isDefault: true,
-    // });
+    const vpc = ec2.Vpc.fromLookup(this, "VPC", {
+      vpcId: "vpc-ea55478d",
+      isDefault: true,
+    });
 
     new s3.Bucket(this, "batata");
     const cluster = new eks.Cluster(this, "Eks", {
       clusterName: "eks",
       version: eks.KubernetesVersion.V1_17,
       defaultCapacity: 0,
+      vpc,
+      vpcSubnets: [{ subnetType: ec2.SubnetType.PUBLIC }],
     });
 
     // // cluster.addNodegroupCapacity('custom-node-group', {
