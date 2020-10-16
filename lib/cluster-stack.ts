@@ -18,7 +18,6 @@ export class ClusterStack extends Stack {
       isDefault: true,
     });
 
-    new s3.Bucket(this, "batata");
     const cluster = new eks.Cluster(this, "Eks", {
       clusterName: "eks",
       version: eks.KubernetesVersion.V1_17,
@@ -27,11 +26,11 @@ export class ClusterStack extends Stack {
       vpcSubnets: [{ subnetType: ec2.SubnetType.PUBLIC }],
     });
 
-    // // cluster.addNodegroupCapacity('custom-node-group', {
-    // //   instanceType: new ec2.InstanceType('t2.micro'),
-    // //   minSize: 1,
-    // //   diskSize: 100,
-    // // });
+    cluster.addNodegroupCapacity("custom-node-group", {
+      instanceType: new ec2.InstanceType("t2.micro"),
+      minSize: 5,
+      diskSize: 100,
+    });
     // cluster.addFargateProfile('MyProfile', {
     //   selectors: [ { namespace: 'default' } ]
     // });
@@ -39,7 +38,8 @@ export class ClusterStack extends Stack {
     const argocdManifest = yaml.safeLoadAll(
       fs.readFileSync("./k8s-manifests/argocd.yaml", "utf8")
     );
-    // cluster.addManifest("argocd", ...argocdManifest);
+    //TODO Namespace
+    cluster.addManifest("argocd", ...argocdManifest);
     // cluster.addHelmChart('NginxIngress', {
     //   chart: 'nginx-ingress',
     //   repository: 'https://helm.nginx.com/stable',
