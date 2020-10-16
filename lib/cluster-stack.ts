@@ -1,7 +1,6 @@
 import { CfnOutput, Construct, Stack, StackProps } from "@aws-cdk/core";
 import * as ec2 from "@aws-cdk/aws-ec2";
-import * as eks from "@aws-cdk/aws-eks";
-import * as s3 from "@aws-cdk/aws-s3";
+import * as eks from "./aws-eks";
 import * as yaml from "js-yaml";
 import * as fs from "fs";
 
