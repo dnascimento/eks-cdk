@@ -13,17 +13,17 @@ export class ClusterStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    // const vpc = ec2.Vpc.fromLookup(this, "VPC", {
-    //   tags: {
-    //     Name: "aws-controltower-VPC",
-    //   },
-    // });
+    const vpc = ec2.Vpc.fromLookup(this, "VPC", {
+      tags: {
+        Name: "aws-controltower-VPC",
+      },
+    });
 
     const cluster = new eks.Cluster(this, "Eks", {
       clusterName: "eks",
       version: eks.KubernetesVersion.V1_17,
       defaultCapacity: 0,
-      // vpc,
+      vpc,
       vpcSubnets: [{ subnetType: ec2.SubnetType.PRIVATE }],
     });
 

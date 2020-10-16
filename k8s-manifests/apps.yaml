@@ -26,7 +26,7 @@ spec:
   source:
     repoURL: https://github.com/dnascimento/eks-apps
     targetRevision: master
-    path: /
+    path: /apps
     helm:
       valueFiles:
         - values.yaml
