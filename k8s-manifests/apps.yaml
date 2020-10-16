@@ -7,10 +7,34 @@ metadata:
 spec:
   description: Project for Core Components
   sourceRepos:
-    - "https://github.com/open-policy-agent/gatekeeper.git"
+    - https://github.com/open-policy-agent/gatekeeper.git
+    - https://github.com/dnascimento/eks-apps
   destinations:
-    - namespace: gatekeeper-system
+    - namespace: argocd
       server: https://kubernetes.default.svc
   clusterResourceWhitelist:
     - group: "*"
       kind: "*"
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: apps
+  namespace: argocd
+spec:
+  project: core-components
+  source:
+    repoURL: https://github.com/dnascimento/eks-apps
+    targetRevision: master
+    path: /
+    helm:
+      valueFiles:
+        - values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
+
