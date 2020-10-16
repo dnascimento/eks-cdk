@@ -3,6 +3,7 @@ import * as ec2 from "@aws-cdk/aws-ec2";
 import * as eks from "@aws-cdk/aws-eks";
 import * as yaml from "js-yaml";
 import * as fs from "fs";
+import * as path from "path";
 
 const argocdManinfestUrl =
   "https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml";
@@ -34,24 +35,21 @@ export class ClusterStack extends Stack {
     // cluster.addFargateProfile('MyProfile', {
     //   selectors: [ { namespace: 'default' } ]
     // });
-
-    const argocdNamespace = yaml.safeLoadAll(
-      fs.readFileSync("./k8s-manifests/argocd-namespace.yaml", "utf8")
-    );
-    cluster.addManifest("argocd-namespace", ...argocdNamespace);
-
-    const argocdManifest = yaml.safeLoadAll(
-      fs.readFileSync("./k8s-manifests/argocd.yaml", "utf8")
-    );
-    cluster.addManifest("argocd", ...argocdManifest);
+    applyManifestFile(cluster, "./k8s-manifests/argocd-namespace.yaml");
+    applyManifestFile(cluster, "./k8s-manifests/argocd.yaml");
+    applyManifestFile(cluster, "./k8s-manifests/apps.yaml");
     // cluster.addHelmChart('NginxIngress', {
     //   chart: 'nginx-ingress',
     //   repository: 'https://helm.nginx.com/stable',
     //   namespace: 'kube-system'
     // });
-
     this.clusterEndpoint = new CfnOutput(this, "Url", {
       value: cluster.clusterEndpoint,
     });
   }
+}
+
+function applyManifestFile(cluster: eks.Cluster, filePath: string) {
+  const argocdManifest = yaml.safeLoadAll(fs.readFileSync(filePath, "utf8"));
+  cluster.addManifest(path.basename(filePath), ...argocdManifest);
 }
