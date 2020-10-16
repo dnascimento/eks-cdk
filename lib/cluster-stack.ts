@@ -35,10 +35,14 @@ export class ClusterStack extends Stack {
     //   selectors: [ { namespace: 'default' } ]
     // });
 
+    const argocdNamespace = yaml.safeLoadAll(
+      fs.readFileSync("./k8s-manifests/argocd-namespace.yaml", "utf8")
+    );
+    cluster.addManifest("argocd-namespace", ...argocdNamespace);
+
     const argocdManifest = yaml.safeLoadAll(
       fs.readFileSync("./k8s-manifests/argocd.yaml", "utf8")
     );
-    //TODO Namespace
     cluster.addManifest("argocd", ...argocdManifest);
     // cluster.addHelmChart('NginxIngress', {
     //   chart: 'nginx-ingress',
