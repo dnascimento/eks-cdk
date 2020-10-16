@@ -1,0 +1,16 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: core-components
+  namespace: argocd
+spec:
+  description: Project for Core Components
+  sourceRepos:
+    - "https://github.com/open-policy-agent/gatekeeper.git"
+  destinations:
+    - namespace: gatekeeper-system
+      server: https://kubernetes.default.svc
+  clusterResourceWhitelist:
+    - group: "*"
+      kind: "*"

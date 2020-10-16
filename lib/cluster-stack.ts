@@ -14,7 +14,6 @@ export class ClusterStack extends Stack {
     super(scope, id, props);
 
     const vpc = ec2.Vpc.fromLookup(this, "VPC", {
-      vpcId: "vpc-ea55478d",
       isDefault: true,
     });
 
@@ -28,7 +27,7 @@ export class ClusterStack extends Stack {
 
     cluster.addNodegroupCapacity("custom-node-group", {
       instanceType: new ec2.InstanceType("t2.micro"),
-      minSize: 5,
+      minSize: 1,
       diskSize: 100,
     });
     // cluster.addFargateProfile('MyProfile', {
