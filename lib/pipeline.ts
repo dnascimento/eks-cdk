@@ -62,52 +62,46 @@ export class ClusterPipeline extends cdk.Stack {
       }),
     });
 
-    // Do this as many times as necessary with any account and region
-    // Account and region may different from the pipeline's.
-    // const dev = new ClusterApp(scope, "Dev", {
-    //   env: {
-    //     account: "223476298486",
-    //     region: "ap-southeast-2",
-    //   },
-    // });
-    // const devStage = pipeline.addApplicationStage(dev);
-
-    // devStage.addActions(
-    //   new ShellScriptAction({
-    //     actionName: "TestService",
-    //     useOutputs: {
-    //       // Get the stack Output from the Stage and make it available in
-    //       // the shell script as $ENDPOINT_URL.
-    //       ENDPOINT_URL: pipeline.stackOutput(dev.clusterEndpoint),
-    //     },
-    //     commands: [
-    //       // Use 'curl' to GET the given URL and fail if it returns an error
-    //       "curl -Ssf $ENDPOINT_URL",
-    //     ],
-    //   })
-    // );
-
     const nonProd = new ClusterApp(scope, "NonProd", {
       env: {
         account: "511321940675",
         region: "ap-southeast-2",
       },
     });
+
     const nonProdStage = pipeline.addApplicationStage(nonProd);
 
-    nonProdStage.addActions(
-      new ShellScriptAction({
-        actionName: "TestService",
-        useOutputs: {
-          // Get the stack Output from the Stage and make it available in
-          // the shell script as $ENDPOINT_URL.
-          ENDPOINT_URL: pipeline.stackOutput(dev.clusterEndpoint),
-        },
-        commands: [
-          // Use 'curl' to GET the given URL and fail if it returns an error
-          "curl -Ssf $ENDPOINT_URL",
-        ],
-      })
-    );
+    // nonProdStage.addActions(
+    //   new ShellScriptAction({
+    //     actionName: "TestService",
+    //     useOutputs: {
+    //       ENDPOINT_URL: pipeline.stackOutput(nonProd.clusterEndpoint),
+    //     },
+    //     commands: [
+    //       "curl -Ssf $ENDPOINT_URL",
+    //     ],
+    //   })
+    // );
+
+    const prod = new ClusterApp(scope, "Prod", {
+      env: {
+        account: "352466865514",
+        region: "ap-southeast-2",
+      },
+    });
+
+    const prodStage = pipeline.addApplicationStage(prod);
+
+    // prodStage.addActions(
+    //   new ShellScriptAction({
+    //     actionName: "TestService",
+    //     useOutputs: {
+    //       ENDPOINT_URL: pipeline.stackOutput(prod.clusterEndpoint),
+    //     },
+    //     commands: [
+    //       "curl -Ssf $ENDPOINT_URL",
+    //     ],
+    //   })
+    // );
   }
 }

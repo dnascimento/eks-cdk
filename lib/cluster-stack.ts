@@ -14,7 +14,9 @@ export class ClusterStack extends Stack {
     super(scope, id, props);
 
     const vpc = ec2.Vpc.fromLookup(this, "VPC", {
-      isDefault: true,
+      tags: {
+        Name: "aws-controltower-VPC",
+      },
     });
 
     const cluster = new eks.Cluster(this, "Eks", {
@@ -22,7 +24,7 @@ export class ClusterStack extends Stack {
       version: eks.KubernetesVersion.V1_17,
       defaultCapacity: 0,
       vpc,
-      vpcSubnets: [{ subnetType: ec2.SubnetType.PUBLIC }],
+      vpcSubnets: [{ subnetType: ec2.SubnetType.PRIVATE }],
     });
 
     cluster.addNodegroupCapacity("custom-node-group", {
