@@ -37,9 +37,14 @@ export class ClusterStack extends Stack {
     // cluster.addFargateProfile('MyProfile', {
     //   selectors: [ { namespace: 'default' } ]
     // });
-    applyManifestFile(cluster, "./k8s-manifests/argocd-namespace.yaml");
-    applyManifestFile(cluster, "./k8s-manifests/argocd.yaml");
-    applyManifestFile(cluster, "./k8s-manifests/apps.yaml");
+    const namespace = applyManifestFile(
+      cluster,
+      "./k8s-manifests/argocd-namespace.yaml"
+    );
+    const argocd = applyManifestFile(cluster, "./k8s-manifests/argocd.yaml");
+    argocd.node.addDependency(namespace);
+    const apps = applyManifestFile(cluster, "./k8s-manifests/apps.yaml");
+    apps.node.addDependency(argocd);
     this.clusterEndpoint = new CfnOutput(this, "Url", {
       value: cluster.clusterEndpoint,
     });
@@ -48,5 +53,5 @@ export class ClusterStack extends Stack {
 
 function applyManifestFile(cluster: eks.Cluster, filePath: string) {
   const argocdManifest = yaml.safeLoadAll(fs.readFileSync(filePath, "utf8"));
-  cluster.addManifest(path.basename(filePath), ...argocdManifest);
+  return cluster.addManifest(path.basename(filePath), ...argocdManifest);
 }
