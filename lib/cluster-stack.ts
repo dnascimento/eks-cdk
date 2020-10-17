@@ -24,12 +24,14 @@ export class ClusterStack extends Stack {
       version: eks.KubernetesVersion.V1_17,
       defaultCapacity: 0,
       vpc,
-      vpcSubnets: [{ subnetType: ec2.SubnetType.PRIVATE }],
+      vpcSubnets: [{ subnetType: ec2.SubnetType.PUBLIC }],
+      endpointAccess: eks.EndpointAccess.PUBLIC_AND_PRIVATE,
     });
 
     cluster.addNodegroupCapacity("custom-node-group", {
       instanceType: new ec2.InstanceType("t2.micro"),
       minSize: 1,
+      subnets: { subnetType: ec2.SubnetType.PUBLIC },
       diskSize: 100,
     });
     // cluster.addFargateProfile('MyProfile', {

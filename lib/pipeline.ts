@@ -62,14 +62,14 @@ export class ClusterPipeline extends cdk.Stack {
       }),
     });
 
-    const nonProd = new ClusterApp(scope, "NonProd", {
-      env: {
-        account: "511321940675",
-        region: "ap-southeast-2",
-      },
-    });
+    // const nonProd = new ClusterApp(scope, "NonProd", {
+    //   env: {
+    //     account: "511321940675",
+    //     region: "ap-southeast-2",
+    //   },
+    // });
 
-    const nonProdStage = pipeline.addApplicationStage(nonProd);
+    // const nonProdStage = pipeline.addApplicationStage(nonProd);
 
     // nonProdStage.addActions(
     //   new ShellScriptAction({
@@ -85,7 +85,7 @@ export class ClusterPipeline extends cdk.Stack {
 
     const prod = new ClusterApp(scope, "Prod", {
       env: {
-        account: "352466865514",
+        account: "284117703700",
         region: "ap-southeast-2",
       },
     });
