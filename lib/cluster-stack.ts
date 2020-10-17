@@ -37,14 +37,9 @@ export class ClusterStack extends Stack {
     // cluster.addFargateProfile('MyProfile', {
     //   selectors: [ { namespace: 'default' } ]
     // });
-    // applyManifestFile(cluster, "./k8s-manifests/argocd-namespace.yaml");
-    // applyManifestFile(cluster, "./k8s-manifests/argocd.yaml");
-    // applyManifestFile(cluster, "./k8s-manifests/apps.yaml");
-    // cluster.addHelmChart('NginxIngress', {
-    //   chart: 'nginx-ingress',
-    //   repository: 'https://helm.nginx.com/stable',
-    //   namespace: 'kube-system'
-    // });
+    applyManifestFile(cluster, "./k8s-manifests/argocd-namespace.yaml");
+    applyManifestFile(cluster, "./k8s-manifests/argocd.yaml");
+    applyManifestFile(cluster, "./k8s-manifests/apps.yaml");
     this.clusterEndpoint = new CfnOutput(this, "Url", {
       value: cluster.clusterEndpoint,
     });
