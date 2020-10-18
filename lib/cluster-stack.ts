@@ -27,14 +27,18 @@ export class ClusterStack extends Stack {
       vpcSubnets: [{ subnetType: ec2.SubnetType.PUBLIC }],
       endpointAccess: eks.EndpointAccess.PUBLIC_AND_PRIVATE,
     });
-
+    cluster.addNodegroupCapacity("custom-node-group", {
+      instanceType: new ec2.InstanceType("t2.micro"),
+      minSize: 3,
+      subnets: { subnetType: ec2.SubnetType.PUBLIC },
+      diskSize: 100,
+    });
     cluster.addFargateProfile("MyProfile", {
       vpc,
       subnetSelection: { subnetType: ec2.SubnetType.PRIVATE },
       selectors: [
         { namespace: "kube-system" },
         { namespace: "gatekeeper-system" },
-        { namespace: "argo-cd" },
       ],
     });
     const namespace = applyManifestFile(
