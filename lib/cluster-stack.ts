@@ -39,7 +39,7 @@ export class ClusterStack extends Stack {
       selectors: [
         { namespace: "kube-system" },
         { namespace: "gatekeeper-system" },
-        { namespace: "argo-cd" },
+        { namespace: "argocd" },
       ],
     });
     const namespace = applyManifestFile(
