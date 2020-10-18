@@ -8,18 +8,11 @@ import {
 import * as codepipeline from "@aws-cdk/aws-codepipeline";
 import * as codepipeline_actions from "@aws-cdk/aws-codepipeline-actions";
 
-/**
- * Your application
- *
- * May consist of one or more Stacks (here, two)
- *
- * By declaring our DatabaseStack and our ComputeStack inside a Stage,
- * we make sure they are deployed together, or not at all.
- */
-
 interface ClusterAppProps extends cdk.StageProps {
   stage: string;
 }
+
+const region = "ap-southeast-2";
 
 class ClusterApp extends cdk.Stage {
   public readonly clusterEndpoint: cdk.CfnOutput;
@@ -68,47 +61,44 @@ export class ClusterPipeline extends cdk.Stack {
       }),
     });
 
-    // const nonProd = new ClusterApp(scope, "NonProd", {
-    //   env: {
-    //     account: "318847094677",
-    //     region: "ap-southeast-2",
-    //   },
-    // });
+    const nonProd = new ClusterApp(scope, "NonProd", {
+      stage: "non-prod",
+      env: {
+        account: "318847094677",
+        region,
+      },
+    });
 
-    // const nonProdStage = pipeline.addApplicationStage(nonProd);
+    const nonProdStage = pipeline.addApplicationStage(nonProd);
 
-    // nonProdStage.addActions(
-    //   new ShellScriptAction({
-    //     actionName: "TestService",
-    //     useOutputs: {
-    //       ENDPOINT_URL: pipeline.stackOutput(nonProd.clusterEndpoint),
-    //     },
-    //     commands: [
-    //       "curl -Ssf $ENDPOINT_URL",
-    //     ],
-    //   })
-    // );
+    nonProdStage.addActions(
+      new ShellScriptAction({
+        actionName: "TestService",
+        useOutputs: {
+          ENDPOINT_URL: pipeline.stackOutput(nonProd.clusterEndpoint),
+        },
+        commands: ["curl -Ssf $ENDPOINT_URL"],
+      })
+    );
 
     const prod = new ClusterApp(scope, "Prod", {
       stage: "prod",
       env: {
         account: "284117703700",
-        region: "ap-southeast-2",
+        region,
       },
     });
 
     const prodStage = pipeline.addApplicationStage(prod);
 
-    // prodStage.addActions(
-    //   new ShellScriptAction({
-    //     actionName: "TestService",
-    //     useOutputs: {
-    //       ENDPOINT_URL: pipeline.stackOutput(prod.clusterEndpoint),
-    //     },
-    //     commands: [
-    //       "curl -Ssf $ENDPOINT_URL",
-    //     ],
-    //   })
-    // );
+    prodStage.addActions(
+      new ShellScriptAction({
+        actionName: "TestService",
+        useOutputs: {
+          ENDPOINT_URL: pipeline.stackOutput(prod.clusterEndpoint),
+        },
+        commands: ["curl -Ssf $ENDPOINT_URL"],
+      })
+    );
   }
 }
