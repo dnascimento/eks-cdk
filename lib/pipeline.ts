@@ -77,7 +77,7 @@ export class ClusterPipeline extends cdk.Stack {
         useOutputs: {
           ENDPOINT_URL: pipeline.stackOutput(nonProd.clusterEndpoint),
         },
-        commands: ["curl -Ssf $ENDPOINT_URL"],
+        commands: ["curl -Sskf $ENDPOINT_URL/healthz"],
       })
     );
 
@@ -97,7 +97,7 @@ export class ClusterPipeline extends cdk.Stack {
         useOutputs: {
           ENDPOINT_URL: pipeline.stackOutput(prod.clusterEndpoint),
         },
-        commands: ["curl -Ssf $ENDPOINT_URL"],
+        commands: ["curl -Sskf $ENDPOINT_URL/healthz"],
       })
     );
   }
