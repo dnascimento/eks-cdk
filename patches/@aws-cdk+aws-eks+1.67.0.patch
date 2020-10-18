@@ -1,16 +1,17 @@
 diff --git a/node_modules/@aws-cdk/aws-eks/lib/cluster-resource.js b/node_modules/@aws-cdk/aws-eks/lib/cluster-resource.js
-index f125394..c2062b7 100644
+index f125394..a2ac5d3 100644
 --- a/node_modules/@aws-cdk/aws-eks/lib/cluster-resource.js
 +++ b/node_modules/@aws-cdk/aws-eks/lib/cluster-resource.js
-@@ -99,6 +99,7 @@ class ClusterResource extends core_2.Construct {
+@@ -99,6 +99,8 @@ class ClusterResource extends core_2.Construct {
          });
          creationRole.addToPolicy(new iam.PolicyStatement({
              actions: [
++                'ec2:DescribeAccountAttributes',
 +                'ec2:DescribeVpcs',
                  'ec2:DescribeSubnets',
                  'ec2:DescribeRouteTables',
              ],
-@@ -134,10 +135,10 @@ class ClusterResource extends core_2.Construct {
+@@ -134,10 +136,10 @@ class ClusterResource extends core_2.Construct {
          creationRole.addToPolicy(new iam.PolicyStatement({
              actions: ['ec2:DescribeVpcs'],
              resources: [stack.formatArn({
