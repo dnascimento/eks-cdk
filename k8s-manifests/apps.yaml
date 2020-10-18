@@ -12,6 +12,8 @@ spec:
   destinations:
     - namespace: argocd
       server: https://kubernetes.default.svc
+    - namespace: gatekeeper-system
+      server: https://kubernetes.default.svc
   clusterResourceWhitelist:
     - group: "*"
       kind: "*"
@@ -26,7 +28,7 @@ spec:
   source:
     repoURL: https://github.com/dnascimento/eks-apps
     targetRevision: master
-    path: /apps
+    path: apps
     helm:
       valueFiles:
         - values.yaml
