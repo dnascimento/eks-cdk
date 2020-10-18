@@ -28,15 +28,13 @@ export class ClusterStack extends Stack {
       endpointAccess: eks.EndpointAccess.PUBLIC_AND_PRIVATE,
     });
 
-    cluster.addNodegroupCapacity("custom-node-group", {
-      instanceType: new ec2.InstanceType("t2.micro"),
-      minSize: 1,
-      subnets: { subnetType: ec2.SubnetType.PUBLIC },
-      diskSize: 100,
+    cluster.addFargateProfile("MyProfile", {
+      selectors: [
+        { namespace: "kube-system" },
+        { namespace: "gatekeeper-system" },
+        { namespace: "argo-cd" },
+      ],
     });
-    // cluster.addFargateProfile('MyProfile', {
-    //   selectors: [ { namespace: 'default' } ]
-    // });
     const namespace = applyManifestFile(
       cluster,
       "./k8s-manifests/argocd-namespace.yaml"
