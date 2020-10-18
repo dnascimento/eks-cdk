@@ -1,4 +1,77 @@
 {
+  "vpc-provider:account=318847094677:filter.tag:Name=aws-controltower-VPC:region=ap-southeast-2:returnAsymmetricSubnets=true": {
+    "vpcId": "vpc-0f4a5f7d425aa95b4",
+    "vpcCidrBlock": "172.31.0.0/16",
+    "availabilityZones": [],
+    "subnetGroups": [
+      {
+        "name": "Private",
+        "type": "Private",
+        "subnets": [
+          {
+            "subnetId": "subnet-0a3ba3ddaa25982ba",
+            "cidr": "172.31.48.0/20",
+            "availabilityZone": "ap-southeast-2a",
+            "routeTableId": "rtb-037c1dd6f9dfdb15b"
+          },
+          {
+            "subnetId": "subnet-0e3e02e6db558fcba",
+            "cidr": "172.31.64.0/20",
+            "availabilityZone": "ap-southeast-2a",
+            "routeTableId": "rtb-09ab6cbfef1e408e0"
+          },
+          {
+            "subnetId": "subnet-0680f4cb02a2782ef",
+            "cidr": "172.31.32.0/20",
+            "availabilityZone": "ap-southeast-2b",
+            "routeTableId": "rtb-0aeeb46cd83ece4cc"
+          },
+          {
+            "subnetId": "subnet-0fc78930992bc7809",
+            "cidr": "172.31.16.0/20",
+            "availabilityZone": "ap-southeast-2b",
+            "routeTableId": "rtb-03c46ac10c6eb8aa1"
+          },
+          {
+            "subnetId": "subnet-0310e70d393b698bb",
+            "cidr": "172.31.128.0/20",
+            "availabilityZone": "ap-southeast-2c",
+            "routeTableId": "rtb-086d2502895ef7251"
+          },
+          {
+            "subnetId": "subnet-0fee7f1ff599c4ca3",
+            "cidr": "172.31.80.0/20",
+            "availabilityZone": "ap-southeast-2c",
+            "routeTableId": "rtb-0fd21554621084ad4"
+          }
+        ]
+      },
+      {
+        "name": "Public",
+        "type": "Public",
+        "subnets": [
+          {
+            "subnetId": "subnet-00a6fb9cc25d18993",
+            "cidr": "172.31.96.0/20",
+            "availabilityZone": "ap-southeast-2a",
+            "routeTableId": "rtb-0b507d8cf1fc0b9db"
+          },
+          {
+            "subnetId": "subnet-07f3283b597455289",
+            "cidr": "172.31.112.0/20",
+            "availabilityZone": "ap-southeast-2b",
+            "routeTableId": "rtb-0b507d8cf1fc0b9db"
+          },
+          {
+            "subnetId": "subnet-0169d70ef9a2b27fb",
+            "cidr": "172.31.0.0/20",
+            "availabilityZone": "ap-southeast-2c",
+            "routeTableId": "rtb-0b507d8cf1fc0b9db"
+          }
+        ]
+      }
+    ]
+  },
   "vpc-provider:account=284117703700:filter.tag:Name=aws-controltower-VPC:region=ap-southeast-2:returnAsymmetricSubnets=true": {
     "vpcId": "vpc-087732a0a40796d3b",
     "vpcCidrBlock": "172.31.0.0/16",

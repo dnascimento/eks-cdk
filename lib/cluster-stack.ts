@@ -29,6 +29,8 @@ export class ClusterStack extends Stack {
     });
 
     cluster.addFargateProfile("MyProfile", {
+      vpc,
+      subnetSelection: { subnetType: ec2.SubnetType.PRIVATE },
       selectors: [
         { namespace: "kube-system" },
         { namespace: "gatekeeper-system" },
