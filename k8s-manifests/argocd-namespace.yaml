@@ -15,10 +15,12 @@ spec:
   selector:
     nginxapp.kubernetes.io/name: argocd-server
   ports:
-    - protocol: TCP
+    - name: http
+      protocol: TCP
       port: 80
       targetPort: 8080
-    - protocol: TCP
+    - name: https
+      protocol: TCP
       port: 443
       targetPort: 8080
 
