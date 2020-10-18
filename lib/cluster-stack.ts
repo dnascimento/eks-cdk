@@ -43,17 +43,17 @@ export class ClusterStack extends Stack {
       ],
     });
 
-    const argocdManifest = yaml.safeLoadAll(
-      fs.readFileSync("./k8s-manifests/argocd.yaml", "utf8")
-    );
-    const argocd = cluster.addManifest("argo", ...argocdManifest);
+    // const argocdManifest = yaml.safeLoadAll(
+    //   fs.readFileSync("./k8s-manifests/argocd.yaml", "utf8")
+    // );
+    // const argocd = cluster.addManifest("argo", ...argocdManifest);
 
-    const appsManifest = yaml.safeLoadAll(
-      fs.readFileSync("./k8s-manifests/apps.yaml", "utf8")
-    );
-    appsManifest[1].spec.source.helm.parameters[0].value = props.stage;
-    const apps = cluster.addManifest("argo-apps", ...appsManifest);
-    apps.node.addDependency(argocd);
+    // const appsManifest = yaml.safeLoadAll(
+    //   fs.readFileSync("./k8s-manifests/apps.yaml", "utf8")
+    // );
+    // appsManifest[1].spec.source.helm.parameters[0].value = props.stage;
+    // const apps = cluster.addManifest("argo-apps", ...appsManifest);
+    // apps.node.addDependency(argocd);
     this.clusterEndpoint = new CfnOutput(this, "Url", {
       value: cluster.clusterEndpoint,
     });
