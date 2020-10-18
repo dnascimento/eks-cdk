@@ -16,12 +16,18 @@ import * as codepipeline_actions from "@aws-cdk/aws-codepipeline-actions";
  * By declaring our DatabaseStack and our ComputeStack inside a Stage,
  * we make sure they are deployed together, or not at all.
  */
+
+interface ClusterAppProps extends cdk.StageProps {
+  stage: string;
+}
+
 class ClusterApp extends cdk.Stage {
   public readonly clusterEndpoint: cdk.CfnOutput;
-  constructor(scope: cdk.Construct, id: string, props?: cdk.StageProps) {
+  constructor(scope: cdk.Construct, id: string, props: ClusterAppProps) {
     super(scope, id, props);
-
-    const cluster = new ClusterStack(this, "Cluster");
+    const cluster = new ClusterStack(this, "Cluster", {
+      stage: props.stage,
+    });
     this.clusterEndpoint = cluster.clusterEndpoint;
   }
 }
@@ -84,6 +90,7 @@ export class ClusterPipeline extends cdk.Stack {
     // );
 
     const prod = new ClusterApp(scope, "Prod", {
+      stage: "prod",
       env: {
         account: "284117703700",
         region: "ap-southeast-2",

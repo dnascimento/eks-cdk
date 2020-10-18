@@ -3,14 +3,14 @@ import * as ec2 from "@aws-cdk/aws-ec2";
 import * as eks from "@aws-cdk/aws-eks";
 import * as yaml from "js-yaml";
 import * as fs from "fs";
-import * as path from "path";
 
-const argocdManinfestUrl =
-  "https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml";
+interface ClusterStackProps extends StackProps {
+  stage: string;
+}
 
 export class ClusterStack extends Stack {
   public readonly clusterEndpoint: CfnOutput;
-  constructor(scope: Construct, id: string, props?: StackProps) {
+  constructor(scope: Construct, id: string, props: ClusterStackProps) {
     super(scope, id, props);
 
     const vpc = ec2.Vpc.fromLookup(this, "VPC", {
@@ -42,21 +42,19 @@ export class ClusterStack extends Stack {
         { namespace: "argocd" },
       ],
     });
-    const namespace = applyManifestFile(
-      cluster,
-      "./k8s-manifests/argocd-namespace.yaml"
+
+    const argocdManifest = yaml.safeLoadAll(
+      fs.readFileSync("./k8s-manifests/argocd.yaml", "utf8")
     );
-    const argocd = applyManifestFile(cluster, "./k8s-manifests/argocd.yaml");
-    argocd.node.addDependency(namespace);
-    const apps = applyManifestFile(cluster, "./k8s-manifests/apps.yaml");
-    apps.node.addDependency(argocd);
+    cluster.addManifest("argocd", ...argocdManifest);
+    const appsManifest = yaml.safeLoadAll(
+      fs.readFileSync("./k8s-manifests/apps.yaml", "utf8")
+    );
+    appsManifest[1].spec.source.helm.parameters[0].value = props.stage;
+    cluster.addManifest("apps", ...appsManifest);
+
     this.clusterEndpoint = new CfnOutput(this, "Url", {
       value: cluster.clusterEndpoint,
     });
   }
-}
-
-function applyManifestFile(cluster: eks.Cluster, filePath: string) {
-  const argocdManifest = yaml.safeLoadAll(fs.readFileSync(filePath, "utf8"));
-  return cluster.addManifest(path.basename(filePath), ...argocdManifest);
 }
